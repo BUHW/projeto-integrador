@@ -1,3 +1,31 @@
+-- Tabela de usuarios
+CREATE TABLE usuarios (
+    i_usuario SERIAL PRIMARY KEY,
+    login VARCHAR(100) NOT null unique,
+    nome varchar(100) not null,
+    senha VARCHAR(255) NOT NULL,
+    status BOOLEAN DEFAULT TRUE,
+    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
+--Tabela de permissoes
+CREATE TABLE permissoes (
+    i_permissao SERIAL PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL UNIQUE,
+    grupo varchar(100) not null,
+    descricao TEXT,
+    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+--Tabela com relacionamento das permissoes
+CREATE TABLE usuarios_permissoes (
+    i_usuario INT REFERENCES usuarios(i_usuario) ON DELETE CASCADE,
+    i_permissao INT REFERENCES permissoes(i_permissao) ON DELETE CASCADE,
+    PRIMARY KEY (i_usuario, i_permissao)
+);
 
 -- Tabela de Responsáveis
 CREATE TABLE responsaveis (
@@ -157,5 +185,15 @@ EXECUTE FUNCTION update_timestamp();
 
 CREATE TRIGGER set_timestamp
 BEFORE UPDATE ON setores
+FOR EACH ROW
+EXECUTE FUNCTION update_timestamp();
+
+CREATE TRIGGER set_timestamp
+BEFORE UPDATE ON usuarios
+FOR EACH ROW
+EXECUTE FUNCTION update_timestamp();
+
+CREATE TRIGGER set_timestamp
+BEFORE UPDATE ON permissoes
 FOR EACH ROW
 EXECUTE FUNCTION update_timestamp();
