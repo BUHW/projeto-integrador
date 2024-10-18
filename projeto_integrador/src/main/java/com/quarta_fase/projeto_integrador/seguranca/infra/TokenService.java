@@ -4,7 +4,7 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
-import com.quarta_fase.projeto_integrador.usuario.infra.controllers.dto.output.UsuarioResponseDTO;
+import com.quarta_fase.projeto_integrador.entidade.Usuarios;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -18,7 +18,7 @@ public class TokenService {
     @Value("${api.security.token.secret}")
     private String secret;
 
-    public String generateToken(UsuarioResponseDTO user) {
+    public String generateToken(Usuarios user) {
         try {
             Algorithm algorithm = Algorithm.HMAC256(secret);
 
@@ -27,6 +27,7 @@ public class TokenService {
                     .withSubject(user.getLogin())
                     .withExpiresAt(this.generateExpirationDate())
                     .sign(algorithm);
+
             return token;
         } catch(JWTCreationException e) {
             throw new RuntimeException("Erro no authenticador");
@@ -48,6 +49,6 @@ public class TokenService {
     }
 
     private Instant generateExpirationDate() {
-        return LocalDateTime.now().plusDays(1).toInstant(ZoneOffset.of("-03:00"));
+        return LocalDateTime.now().plusHours(12).toInstant(ZoneOffset.of("-03:00"));
     }
 }

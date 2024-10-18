@@ -1,7 +1,7 @@
 package com.quarta_fase.projeto_integrador.seguranca.infra;
 
+import com.quarta_fase.projeto_integrador.auth.infra.exception.LoginNaoEncontradoException;
 import com.quarta_fase.projeto_integrador.entidade.Usuarios;
-import com.quarta_fase.projeto_integrador.usuario.infra.controllers.dto.output.UsuarioResponseDTO;
 import com.quarta_fase.projeto_integrador.usuario.infra.persistence.jpa.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -23,8 +23,12 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
-        Usuarios user = this.repository.encontrarUsuarioPorLogin(login);
-        return new org.springframework.security.core.userdetails.User(user.getLogin(),
+
+        Usuarios user = this.repository.encontrarUsuarioPorLogin(login)
+                .orElseThrow(LoginNaoEncontradoException::new);
+
+        return new org.springframework.security.core.userdetails.User(
+                user.getLogin(),
                 user.getPassword(),
                 new ArrayList<>());
     }

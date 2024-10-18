@@ -1,23 +1,27 @@
 package com.quarta_fase.projeto_integrador.usuario.infra.persistence.jpa.mappers;
 
 import com.quarta_fase.projeto_integrador.entidade.Usuarios;
-import com.quarta_fase.projeto_integrador.usuario.infra.controllers.dto.output.UsuarioResponseDTO;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.quarta_fase.projeto_integrador.usuario.infra.controllers.dto.output.CadastrarUsuarioResponseDTO;
 
 public class CadastrarUsuarioMapper {
 
-    @Autowired
     public void CadastrarUsuarioUseCase() {
         throw new UnsupportedOperationException("Essa clase não pode ser instanciada!");
     }
 
-    private static UsuarioResponseDTO toCadastrarUsuarioResponseDTO(Usuarios usuario) {
-        return UsuarioResponseDTO.builder()
-                .id(usuario.getId())
+    public static Usuarios toUsuariosEntidade(CadastrarUsuarioResponseDTO usuarioDTO) {
+        return Usuarios.builder()
+                .login(usuarioDTO.getLogin())
+                .nome(usuarioDTO.getNome())
+                .password(usuarioDTO.getPassword())
+                .build();
+    }
+
+    public static CadastrarUsuarioResponseDTO toCadastrarUsuarioResponseDTO(Usuarios usuario) {
+        return CadastrarUsuarioResponseDTO.builder()
                 .login(usuario.getLogin())
                 .nome(usuario.getNome())
                 .password(usuario.getPassword())
-                .inativo(usuario.isInativo())
                 .build();
     }
 }

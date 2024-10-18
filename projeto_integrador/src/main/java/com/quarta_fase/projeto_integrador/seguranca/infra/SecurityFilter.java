@@ -1,8 +1,7 @@
 package com.quarta_fase.projeto_integrador.seguranca.infra;
 
+import com.quarta_fase.projeto_integrador.auth.infra.exception.LoginNaoEncontradoException;
 import com.quarta_fase.projeto_integrador.entidade.Usuarios;
-import com.quarta_fase.projeto_integrador.usuario.infra.controllers.dto.output.UsuarioLogadoResponseDTO;
-import com.quarta_fase.projeto_integrador.usuario.infra.controllers.dto.output.UsuarioResponseDTO;
 import com.quarta_fase.projeto_integrador.usuario.infra.persistence.jpa.UsuarioRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -35,7 +34,8 @@ public class SecurityFilter extends OncePerRequestFilter {
         var login = tokenService.validateToken(token);
 
         if (login != null ) {
-            Usuarios user = userRepository.encontrarUsuarioPorLogin(login);
+            Usuarios user = userRepository.encontrarUsuarioPorLogin(login)
+                    .orElseThrow(LoginNaoEncontradoException::new);
             var authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
             var authentication = new UsernamePasswordAuthenticationToken(user, null, authorities);
             SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -46,8 +46,10 @@ public class SecurityFilter extends OncePerRequestFilter {
 
     private String recoverToken(HttpServletRequest request){
         var authHeader = request.getHeader("Authorization");
-        if(authHeader == null) return null;
+        if(authHeader == null) {
+            System.out.println("Authorization header ausente.");
+            return null;
+        }
         return authHeader.replace("Bearer ", "");
     }
-
 }
