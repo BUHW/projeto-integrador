@@ -3,7 +3,7 @@ package com.quarta_fase.projeto_integrador.usuario.infra.controllers;
 import com.quarta_fase.projeto_integrador.entidade.Usuarios;
 import com.quarta_fase.projeto_integrador.usuario.aplication.usecases.AtualizarUsuarioUseCase;
 import com.quarta_fase.projeto_integrador.usuario.aplication.usecases.CadastrarUsuarioUseCase;
-import com.quarta_fase.projeto_integrador.usuario.infra.controllers.dto.output.UsuarioListResponseDTO;
+import com.quarta_fase.projeto_integrador.usuario.infra.controllers.dto.output.PaginaUsuarioResponseDTO;
 import com.quarta_fase.projeto_integrador.usuario.infra.persistence.jpa.UsuarioRepository;
 import com.quarta_fase.projeto_integrador.usuario.infra.controllers.dto.output.CadastrarUsuarioResponseDTO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,27 +33,25 @@ public class UsuarioController {
         this.atualizarUsuarioUseCase = atualizarUsuarioUseCase;
     }
 
-    @PostMapping("/cadastrar")
+    @PostMapping
     public ResponseEntity<CadastrarUsuarioResponseDTO> criar(@RequestBody CadastrarUsuarioResponseDTO usuario) {
         CadastrarUsuarioResponseDTO novoUsuario = cadastrarUsuarioUseCase.cadastrarUsuario(usuario);
         return ResponseEntity.ok(novoUsuario);
     }
 
     @GetMapping
-    public ResponseEntity<Page<UsuarioListResponseDTO>> listarUsuarios(@PageableDefault(size = 10) Pageable pageable) {
-        Page<Usuarios> usuarios = usuarioRepository.findAll(pageable);
-        Page<UsuarioListResponseDTO> response = usuarios.map(u -> new UsuarioListResponseDTO(u.getId(), u.getLogin(), u.getNome(), u.isInativo()));
+    public ResponseEntity<Page<PaginaUsuarioResponseDTO>> listarUsuarios(@PageableDefault(size = 10) Pageable pageable) {
+        Page<Usuarios> usuarios = usuarioRepository.buscarUsuarios(pageable);
+        Page<PaginaUsuarioResponseDTO> response = usuarios.map(u -> new PaginaUsuarioResponseDTO(u.getId(), u.getLogin(), u.getNome(), u.isInativo()));
         return ResponseEntity.ok(response);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<UsuarioListResponseDTO> atualizarUsuario(
+    public ResponseEntity<PaginaUsuarioResponseDTO> atualizarUsuario(
             @PathVariable UUID id,
-            @RequestBody UsuarioListResponseDTO usuarioDTO
+            @RequestBody PaginaUsuarioResponseDTO usuarioDTO
     ) {
-        UsuarioListResponseDTO usuarioAtualizado = atualizarUsuarioUseCase.atualizarUsuario(id, usuarioDTO);
-
-        return ResponseEntity.ok(usuarioAtualizado);
+        return ResponseEntity.ok(atualizarUsuarioUseCase.atualizarUsuario(id, usuarioDTO));
     }
 
     @DeleteMapping("/{id}")
