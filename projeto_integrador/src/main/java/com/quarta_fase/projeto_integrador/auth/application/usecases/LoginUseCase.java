@@ -7,6 +7,7 @@ import com.quarta_fase.projeto_integrador.seguranca.infra.TokenService;
 import com.quarta_fase.projeto_integrador.auth.infra.controllers.dto.input.LoginRequestDTO;
 import com.quarta_fase.projeto_integrador.usuario.infra.controllers.dto.output.UsuarioLogadoResponseDTO;
 import com.quarta_fase.projeto_integrador.usuario.infra.persistence.jpa.UsuarioRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -17,7 +18,7 @@ public class LoginUseCase {
     private final PasswordEncoder passwordEncoder;
     private final TokenService tokenService;
 
-
+    @Autowired
     public LoginUseCase(UsuarioRepository usuarioRepository,
                         PasswordEncoder passwordEncoder,
                         TokenService tokenService) {

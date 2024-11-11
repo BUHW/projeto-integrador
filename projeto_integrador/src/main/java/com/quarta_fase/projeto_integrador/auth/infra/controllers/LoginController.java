@@ -24,11 +24,6 @@ public class LoginController {
 
     @PostMapping("/login")
     public ResponseEntity<UsuarioLogadoResponseDTO> login(@RequestBody LoginRequestDTO loginDTO) {
-        try {
-            UsuarioLogadoResponseDTO logado = loginUseCase.login(loginDTO);
-            return ResponseEntity.ok(logado);
-        } catch (LoginNaoEncontradoException | LoginInvalidoException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
+        return ResponseEntity.ok(loginUseCase.login(loginDTO));
     }
 }
