@@ -1,8 +1,10 @@
 package com.quarta_fase.projeto_integrador.auth.infra.exception;
 
-public class LoginInvalidoException extends RuntimeException {
+import com.quarta_fase.projeto_integrador.utils.exceptions.ModelException;
+
+public class LoginInvalidoException extends ModelException {
 
     public LoginInvalidoException() {
-        super("Login inválido");
+        super("Login inválido", "NAO_AUTORIZADO");
     }
 }
