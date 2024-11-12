@@ -3,6 +3,7 @@ package com.quarta_fase.projeto_integrador.usuario.infra.controllers;
 import com.quarta_fase.projeto_integrador.entidade.Usuarios;
 import com.quarta_fase.projeto_integrador.usuario.aplication.usecases.AtualizarUsuarioUseCase;
 import com.quarta_fase.projeto_integrador.usuario.aplication.usecases.CadastrarUsuarioUseCase;
+import com.quarta_fase.projeto_integrador.usuario.aplication.usecases.ExcluirUsuarioUseCase;
 import com.quarta_fase.projeto_integrador.usuario.infra.controllers.dto.output.PaginaUsuarioResponseDTO;
 import com.quarta_fase.projeto_integrador.usuario.infra.persistence.jpa.UsuarioRepository;
 import com.quarta_fase.projeto_integrador.usuario.infra.controllers.dto.output.CadastrarUsuarioResponseDTO;
@@ -22,15 +23,18 @@ public class UsuarioController {
 
     private final CadastrarUsuarioUseCase cadastrarUsuarioUseCase;
     private final AtualizarUsuarioUseCase atualizarUsuarioUseCase;
+    private final ExcluirUsuarioUseCase excluirUsuarioUseCase;
     private final UsuarioRepository usuarioRepository;
 
     @Autowired
-    public UsuarioController(CadastrarUsuarioUseCase usuarioUseCase,
-                             UsuarioRepository usuarioRepository,
-                             AtualizarUsuarioUseCase atualizarUsuarioUseCase) {
-        this.cadastrarUsuarioUseCase = usuarioUseCase;
+    public UsuarioController(UsuarioRepository usuarioRepository,
+                             CadastrarUsuarioUseCase usuarioUseCase,
+                             AtualizarUsuarioUseCase atualizarUsuarioUseCase,
+                             ExcluirUsuarioUseCase excluirUsuarioUseCase) {
         this.usuarioRepository = usuarioRepository;
+        this.cadastrarUsuarioUseCase = usuarioUseCase;
         this.atualizarUsuarioUseCase = atualizarUsuarioUseCase;
+        this.excluirUsuarioUseCase = excluirUsuarioUseCase;
     }
 
     @PostMapping
@@ -42,7 +46,7 @@ public class UsuarioController {
     @GetMapping
     public ResponseEntity<Page<PaginaUsuarioResponseDTO>> listarUsuarios(@PageableDefault(size = 10) Pageable pageable) {
         Page<Usuarios> usuarios = usuarioRepository.buscarUsuarios(pageable);
-        Page<PaginaUsuarioResponseDTO> response = usuarios.map(u -> new PaginaUsuarioResponseDTO(u.getId(), u.getLogin(), u.getNome(), u.isInativo()));
+        Page<PaginaUsuarioResponseDTO> response = usuarios.map(u -> new PaginaUsuarioResponseDTO(u.getId(), u.getLogin(), u.getPassword(), u.getNome(), u.isInativo()));
         return ResponseEntity.ok(response);
     }
 
@@ -56,12 +60,12 @@ public class UsuarioController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletarUsuario(@PathVariable UUID id) {
-        if (usuarioRepository.existsById(id)) {
-            usuarioRepository.deleteById(id);
+        boolean excluido = excluirUsuarioUseCase.excluirLogicamente(id);
+        if (excluido) {
             return ResponseEntity.noContent().build();
         } else {
             return ResponseEntity.notFound().build();
         }
-
     }
+
 }

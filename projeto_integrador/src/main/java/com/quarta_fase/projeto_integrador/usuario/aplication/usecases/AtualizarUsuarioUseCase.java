@@ -4,6 +4,7 @@ import com.quarta_fase.projeto_integrador.entidade.Usuarios;
 import com.quarta_fase.projeto_integrador.usuario.infra.controllers.dto.output.PaginaUsuarioResponseDTO;
 import com.quarta_fase.projeto_integrador.usuario.infra.persistence.jpa.UsuarioRepository;
 import com.quarta_fase.projeto_integrador.usuario.infra.persistence.jpa.mappers.UsuarioMapper;
+import com.quarta_fase.projeto_integrador.utils.exceptions.ModelException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,12 +27,12 @@ public class AtualizarUsuarioUseCase {
         if (usuarioExistente.isPresent()) {
             Usuarios usuario = usuarioExistente.get();
             usuario.setLogin(usuarioDTO.getLogin());
+            usuario.setPassword(usuarioDTO.getPassword());
             usuario.setNome(usuarioDTO.getNome());
             usuario.setInativo(usuarioDTO.isInativo());
-            Usuarios usuarioAtualizado = usuarioRepository.save(usuario);
-            return UsuarioMapper.converterPaginaUsuario(usuarioAtualizado);
+            return UsuarioMapper.converterPaginaUsuario(usuarioRepository.save(usuario));
         } else {
-            throw new RuntimeException("Usuário não encontrado");
+            throw new ModelException("Usuário não encontrado");
         }
     }
 }
