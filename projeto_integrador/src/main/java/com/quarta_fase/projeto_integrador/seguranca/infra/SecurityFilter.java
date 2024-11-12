@@ -34,7 +34,7 @@ public class SecurityFilter extends OncePerRequestFilter {
         var login = tokenService.validateToken(token);
 
         if (login != null ) {
-            Usuarios user = userRepository.encontrarUsuarioPorLogin(login)
+            Usuarios user = userRepository.buscarPorLogin(login)
                     .orElseThrow(LoginNaoEncontradoException::new);
             var authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
             var authentication = new UsernamePasswordAuthenticationToken(user, null, authorities);

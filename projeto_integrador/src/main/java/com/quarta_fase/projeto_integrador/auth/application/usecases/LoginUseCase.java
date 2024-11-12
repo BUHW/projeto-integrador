@@ -29,7 +29,7 @@ public class LoginUseCase {
 
     public UsuarioLogadoResponseDTO login(LoginRequestDTO usuarioLogadoDTO) {
 
-        Usuarios usuario = usuarioRepository.encontrarUsuarioPorLogin(usuarioLogadoDTO.getLogin())
+        Usuarios usuario = usuarioRepository.buscarPorLogin(usuarioLogadoDTO.getLogin())
                 .orElseThrow(LoginNaoEncontradoException::new);
 
         if (passwordEncoder.matches(usuarioLogadoDTO.getPassword(), usuario.getPassword())) {
